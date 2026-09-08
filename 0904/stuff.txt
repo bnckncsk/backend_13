@@ -8,3 +8,5 @@ npx tsx ./src/index.ts
 npm i -D ts-node
 npx ts-node ./src/index.ts
 node ./src/index.ts
+
+terminalbol is lehet commitolni
