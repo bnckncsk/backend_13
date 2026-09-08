@@ -1,0 +1,10 @@
+npm + nodejs telepitese
+majd terminalba npm init typescript
+npm i -D nodemon
+npm run build
+npm i -D tsc
+tsc ./src/index.ts
+npx tsx ./src/index.ts
+npm i -D ts-node
+npx ts-node ./src/index.ts
+node ./src/index.ts
