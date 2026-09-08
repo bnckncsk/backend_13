@@ -10,3 +10,4 @@ npx ts-node ./src/index.ts
 node ./src/index.ts
 
 terminalbol is lehet commitolni
+nodejs legfrissebb verzio kell
