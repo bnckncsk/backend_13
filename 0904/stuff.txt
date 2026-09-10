@@ -20,3 +20,7 @@ es ha utana a terminalba: npm run dev
 akkor lefut az index.ts es real time updatel
 
 clonozas utan: npm i (ha nincs node_modules)
+
+
+npm i -g typescript     globalisan letolti a typescriptet, ha nincs net akkor is le lehet tolteni utana
+npx tsc --init          letrehozza a tsconfigot
