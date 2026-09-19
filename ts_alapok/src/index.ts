@@ -465,13 +465,14 @@ interface IUser {
   id: number;
   name: string;
   email: string;
+  avatarUrl?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
 const apiResponse: IApiResponse<IUser> = {
   data: {
-    id: 1,
+    id: 12345,
     name: "John Doe",
     email: "john.doe@example.com",
     createdAt: new Date(),
@@ -482,3 +483,68 @@ const apiResponse: IApiResponse<IUser> = {
 };
 
 console.log(apiResponse);
+
+/*
+// csak az osztaly egy reszenek hasznalata
+const updateUser: Partial<IUser> = {
+  name: "Jane Doe"
+};
+
+// ertekek updatelese, de minden erteket meg kell adni
+const updateUser: Required<IUser> = {
+  id: 12345,
+  name: "Jane Doe",
+  email: "jane.doe@example.com",
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+
+const updateUser: Pick<IUser, "id" | "name"> = {
+  id: 97864,
+  name: "done"
+};
+
+// Omittal azt valasztjuk ki, amit nem akarunk hasznalni
+const updateUser: Omit<IUser, "id" | "name"> = {
+  email: "fds",
+  avatarUrl: "fds",
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+*/
+
+const updateUser: IUser = {
+  id: 12345,
+  name: "jdhs",
+  email: "kfhsbg@gmail.com",
+  createdAt: new Date(),
+  updatedAt: new Date()
+};
+
+console.log(updateUser);
+
+type UserKey = keyof IUser;   // UserKey tipus: "id" | "name" | "email" | "avatarUrl" | "createdAt" | "updatedAt"
+const field  = 'name';
+const key = field as UserKey;
+
+console.log(updateUser[key]);
+
+///////////////////////////////////////////////
+
+
+const kocka = {a: 20, b:10}
+type Kocka = typeof kocka;   // Kocka tipus: { a: number; b: number; }
+
+const kocka2: Kocka = {a: 30, b: 40};
+console.log(kocka2);
+
+//////////////////////////////////////////////
+
+if (updateUser.name !== null) {
+  console.log(updateUser.name.toUpperCase());
+}
+
+const name__ = updateUser?.avatarUrl ?? "ismeretlen";   // ha az avatarUrl undefined vagy null, akkor az "ismeretlen" stringet adja vissza
+console.log(name__);
+
+//////////////////////////////////////////////
