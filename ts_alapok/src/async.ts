@@ -59,3 +59,21 @@ async function main(): Promise<void> {
 }
 
 main();
+
+
+
+// 09.22
+// generalizalt fuggveny
+
+const getValami = <T>(data:T) : Promise<T> => {
+    return new Promise((resolve) => {
+        resolve(data);
+  });
+};
+
+getValami<number>(42).then((num) => {
+    console.log(num.toFixed(2));
+});
+getValami<string>("Hello").then((text) => {
+    console.log(text.toUpperCase());
+});

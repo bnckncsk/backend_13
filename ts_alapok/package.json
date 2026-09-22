@@ -1,11 +1,11 @@
 {
-  "name": "0904",
+  "name": "ts_alapok",
   "version": "1.0.0",
   "main": "./lib/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon --exec node ./src/index.ts",
-    "dev-ts": "nodemon --exec npx tsx ./src/index.ts"
+    "dev": "nodemon --exec node ./src/fetch.ts",
+    "dev-ts": "nodemon --exec npx tsx ./src/fetch.ts"
   },
   "author": "",
   "license": "ISC",
