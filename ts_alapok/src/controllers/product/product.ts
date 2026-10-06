@@ -210,4 +210,29 @@ export class Products{
         this._products.push(newProduct);
         return newProduct;
     }
+
+    getProductById(id: number): Product | undefined {
+        return this._products.find(p => p.id === id);
+    }
+
+    updateProduct(id: number, data: Partial<IProduct>): boolean {
+        const product = this.getProductById(id);
+        if (!product) return false;
+
+        Object.assign(product, data);
+
+        Object.keys(data).forEach((key) => {
+            const propKey = key as keyof IProduct;
+            if (propKey !== 'id' && data[propKey] !== undefined) {
+                (product as any)[propKey] = data[propKey];
+            }
+        });
+        return true;
+    }
+
+    addProduct(data: Partial<IProduct>): Product {
+        const newProduct = new Product(data);
+        this._products.push(newProduct);
+        return newProduct;
+    }
 }
