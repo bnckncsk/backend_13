@@ -1,69 +1,89 @@
+import type {Response, Request} from "express"
 import data from "../../app/data/data.ts"
-import type { Response, Request } from "express"
-import { Product, Products, type IProduct } from "./product.ts"
+import { Product, ProductManager, type IProduct } from "./product.ts"
 
-// hasznaljuk a product.tsben levo osztalyt a getProducthoz, 
-// majd kuldjuk vissza a szervernek a setProducts segitsegevel
-
-export const getProduct = (_req:Request, res:Response) => {
-    const products = new Products(data);
-    res.send(products.allProductsData);
+export const getProduct = (_req:Request,res:Response) => {
+    const products = new ProductManager(data)
+    res.send(
+        products.allProductsData
+    )
 }
 
-export const setProducts = (req:Request, res:Response) => {
-    const products = new Products(data);
-    const product = products.createProduct(req.body);
-    res.send(product);
+export const  setProducts = (req:Request,res:Response) => {
+    const newProduct: Product = new Product(req.body)
+    const products = new ProductManager(data)
+    products.addProduct(newProduct)
+    res.send(products.allProductsData)
 }
 
-export const getProductById = (req:Request, res:Response):void => {
-    const products = new Products(data);
-    if (!req.params.id) {
-        res.status(400).send("Product ID is required")
-        return
-    }
+export const getProductById = (req:Request,res:Response):void => {
+    const products = new ProductManager(data)
     const productId: number = parseInt(req.params.id as string)
+    console.log("Product ID:", productId) // Debugging line to check the received ID
     const product: Product | undefined = products.getProductById(productId)
-    if (product){
+    if (product) {
         res.send(product)
         return
     }
-    res.status(404).send("Product not found")
+    res.status(404).send("Product not found")   
 }
 
-export const updateProduct = (req:Request, res:Response):void => {
-    const products = new Products(data);
-    const productId: number = parseInt(req.params.id as string)
+export const updateProduct = (req:Request,res:Response):void => {
+    const products: ProductManager = new ProductManager(data)
+    const productId: number = parseInt(req.params.id as string) 
+    
+    
+ if (!checkRequiredFields(req.body,products.allProductsData[0] as IProduct)) {
+        res.status(400).send("Missing required fields")
+        return
+    }   
 
+
+ // Check if the product exists
     const product = products.getProductById(productId)
-
     if (!product) {
         products.addProduct(req.body)
-        res.send(products.allProductsData[products.allProductsData.length - 1])
+        res.send(products.getProductById(products.addProduct(req.body))) // Return the newly added product
         return
     }
-
     const updatedProduct: Product = new Product(req.body)
     products.updateProduct(productId, updatedProduct)
     res.send(products.allProductsData)
 }
 
-// feladat: kulcsok lekérése egy függvénnyel ami az új adatokat is lekéri
-// ellenőrizzük hogy minden kulcs megvan e és van értéke
+export const updateProductPatch = (req: Request, res: Response): void => {
+    if (!req.body ||typeof req.body !== 'object') {
+        res.status(400).send("Invalid request body")
+    }
+    const products = new ProductManager(data)
+    const productId: number = parseInt(req.params.id as string)
 
-export const productsExist = (req: Request, res: Response) => {
-    const products = new Products(data);
-    const productKeys = Object.keys(products.allProductsData) as (keyof IProduct)[]
+    const update = products.updateProduct(productId, req.body);
+    if (!update) {
+        res.status(404).send("Product not found")
+        return
+    }
+    res.send(products.getProductById(productId))
+}
 
-    for (const key of productKeys) {
-        if (key === 'id') continue;
-
-        if (!(key in req.body) || req.body[key] === undefined || req.body[key] === null || req.body[key] === '') {
-            return res
-                .status(400)
-                .send(`Missing or invalid value for property: ${String(key)}`);
-        }
+export const deleteProduct = (req: Request, res: Response): void => {
+    const products = new ProductManager(data);
+    const productId : number = parseInt(req.params.id as string)
+    const deleted = products.deleteProduct(productId)
+    if (!deleted) {
+        res.status(404).send("Product not found")
+        return
     }
 
-    return true;
+    res.status(204).send()
+}
+
+const  checkRequiredFields = (body: IProduct,product: IProduct): boolean => {
+    if ( !body || typeof body !== 'object') {
+        return false;
+    }
+
+    const requiredFields = Object.keys(product).filter(key => key !== 'id')
+    console.log("Required fields:", requiredFields) // Debugging line to check the required fields
+    return requiredFields.every(field => body.hasOwnProperty(field));
 }
