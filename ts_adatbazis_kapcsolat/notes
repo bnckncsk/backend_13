@@ -1,0 +1,8 @@
+docker lemezkep letoltes
+docker run --name mysql-server -e MYSQL_ROOT_PASSWORD=jelszo -p 3306:3306 -d mysql:latest
+
+uj parancsok
+
+npm i cors
+npm i -D @types/cors
+npm i mysql2

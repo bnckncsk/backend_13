@@ -1,0 +1,36 @@
+{
+  "name": "ts_adatbazis_kapcsolat",
+  "version": "1.0.0",
+  "main": "./lib/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --exec node ./src/app/server.ts",
+    "dev-ts": "nodemon --exec npx tsx ./src/app/server.ts"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "type": "module",
+  "dependencies": {
+    "body-parser": "^2.3.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.6"
+  },
+  "files": [
+    "./bin/*",
+    "./lib/*"
+  ],
+  "typings": "./lib/index.d.ts",
+  "devDependencies": {
+    "@types/body-parser": "^1.19.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "dotenv": "^18.0.6",
+    "nodemon": "^1.0.2",
+    "tsc": "^2.0.4",
+    "tslint": "^5.4.0",
+    "typescript": "^7.0.2"
+  }
+}
