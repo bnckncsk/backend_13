@@ -1,4 +1,4 @@
-import mysql from "mysql2/promise";
+import mysql, { type ResultSetHeader } from "mysql2/promise";
 import config from "../../app/config.ts";
 
 export interface IProduct {
@@ -151,11 +151,11 @@ export class ProductManager {
   // --- GETTEREK ---
 
   // Visszaadja az összes terméket tiszta IProduct tömbként (biztonságos exportáláshoz)
-  async allProductsData(): Promise<IProduct[]> {
+  public async allProductsData(): Promise<IProduct[]> {
     try {
       const conn = await mysql.createConnection(config);
       const [rows] = await conn.execute("SELECT * FROM products");
-      await conn.end();
+      await conn.end(); // Debugging line to check the fetched products
       return rows as IProduct[];
     } catch (error) {
       console.error("Hiba a termékek lekérésekor:", error);
@@ -170,38 +170,73 @@ export class ProductManager {
 
   // Új termék hozzáadása
   public async addProduct(productData: Partial<Product>) {
-    try{
+    
+   try {
       const conn = await mysql.createConnection(config);
-      const result = await conn.execute("INSERT INTO products values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [productData.name, productData.category, productData.brand, productData.price, productData.currency, productData.stock, productData.rating, productData.active, productData.description, productData.image]);
-      await conn.end();
-      return result[0].constructor.name === 'OkPacket' ? result[0].insertId : undefined
-    } catch(error) {
-      console.error("Hiba a termékek lekérésekor:", error)
-      return undefined
-    }
+      const result:any = await conn.query("INSERT INTO products values(null, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)", 
+        [productData.name, productData.category, productData.brand, productData.price, productData.currency, productData.stock, productData.rating, productData.active, productData.description, productData.image]);
+      await conn.end(); // Debugging line to check the fetched products
+      return result[0].insertId; // Visszaadjuk az újonnan beszúrt termék ID-ját
+    } catch (error) {
+      console.error("Hiba a termékek lekérésekor:", error);
+      return undefined;
+    }  
+
+   
   }
 
   // Termék lekérése ID alapján
   public async getProductById(id: number) {
-    try{
+   try {
       const conn = await mysql.createConnection(config);
       const [rows]: [IProduct[]] = await conn.execute("SELECT * FROM products WHERE id = ?", [id]) as unknown as [IProduct[]];
-      await conn.end();
+      await conn.end(); // Debugging line to check the fetched products
       return rows[0] as IProduct | undefined;
-    } catch(error) {
-      console.error("Hiba a termékek lekérésekor:", error)
-      return []
-    }
+    } catch (error) {
+      console.error("Hiba a termékek lekérésekor:", error);
+      return undefined  ;
+    }  
   }
 
   // Termék frissítése
-  public updateProduct(id: number, updatedData: Partial<IProduct>) {
-    
+  public async updateProduct(id: number, updatedData: Partial<IProduct>) {
+    try {
+      const getProduct = await this.getProductById(id);
+      if (!getProduct) {
+         const newProductId = await this.addProduct(updatedData as unknown as Product);
+         if (!newProductId) {
+            throw new Error("Failed to add product")
+         }
+         const getNewProduct = await this.getProductById(newProductId);
+         return getNewProduct;
+      }
+      delete updatedData.id; // Az ID-t nem szabad frissíteni
+      Object.assign(getProduct, updatedData); 
+      const conn = await mysql.createConnection(config);
+      const [result] = await conn.query("UPDATE products SET ? WHERE id = ?", [getProduct, id]);
+      conn.end();
+      console.log("Update result:", result); // Debugging line to check the update result
+      if ((result as ResultSetHeader).affectedRows === 0) {
+        throw new Error("Product not found or no changes made");
+      }
+      return getProduct; // Visszaadjuk a frissített terméket
+    } catch (error) {
+      console.error("Hiba a termék frissítésekor:", error);
+      return undefined;
+    }
   }
 
   // Termék törlése ID alapján
-  public deleteProduct(id: number) {
-   
+  public async deleteProduct(id: number) {
+    try {
+      const conn = await mysql.createConnection(config);
+      const [result] = await conn.query("DELETE FROM products WHERE id = ?", [id]);
+      await conn.end();
+      return (result as ResultSetHeader).affectedRows > 0;
+    } catch (error) {
+      console.error("Hiba a termék törlésekor:", error);
+      return undefined;
+    }
   }
 
   // --- SZŰRÉSEK ÉS KERESÉSEK ---
