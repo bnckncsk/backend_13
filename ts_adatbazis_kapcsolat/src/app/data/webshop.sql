@@ -1,4 +1,6 @@
-created database webshop COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE webshop
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_unicode_ci;
 use webshop;
 
 CREATE TABLE products (
