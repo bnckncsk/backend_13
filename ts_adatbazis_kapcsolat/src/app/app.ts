@@ -1,23 +1,17 @@
-import express from "express"      // default export ezert igy importaljuk (az express helyett barmi irhato)
+import express from "express"
 import router from "../routes/routes.ts"
 import productsRoutes from "../controllers/product/routes.ts"
 import cors from "cors"
-// import bodyParser from "body-parser"
-
-const app = express()       // egy sorban egy utasításnál elhagyható a ;
-
-app.use(express.json())     // json formátumban dolgozza fel az adatokat
-app.use(express.urlencoded())       // express is tud kezelni mas formatumot
-// app.use(bodyParser.urlencoded({extended:true}))
-
-app.use(express.static("./src/app"))
-app.use("/", router)
-app.use("/", productsRoutes)
-
+//import bodyParser from "body-parser"
+const app = express()
+app.use(express.json())
+app.use(express.urlencoded())
+app.use("/",router)
+app.use("/",productsRoutes)
 app.use(cors({
     origin: "*"
 }))
-
+//app.use(bodyParser.urlencoded({extended:true}))
 
 
 

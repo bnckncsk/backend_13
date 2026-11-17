@@ -1,0 +1,35 @@
+{
+  "name": "1117_feladat",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "./lib/index.js",
+  "scripts": {
+    "dev": "tsx src/app/server.ts"
+  },
+  "dependencies": {
+    "body-parser": "^2.3.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.24.6"
+  },
+  "files": [
+    "./bin/*",
+    "./lib/*"
+  ],
+  "devDependencies": {
+    "@types/body-parser": "^1.19.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^26.6.6",
+    "dotenv": "^18.0.10",
+    "nodemon": "^3.1.14",
+    "tslint": "^5.4.0",
+    "tsx": "^4.23.15",
+    "typescript": "^7.0.2"
+  },
+  "typings": "./lib/index.d.ts",
+  "allowScripts": {
+    "nodemon@1.19.4": true
+  }
+}

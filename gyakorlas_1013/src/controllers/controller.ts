@@ -19,15 +19,16 @@ export const getOneAnimal = (req: Request, res: Response) => {
 export const addNewAnimal = (req: Request, res: Response) =>{
     const newAnimal = {...req.body, id: Math.max(0, ...data.map(a =>a.id)) + 1}
 
-    if (!newAnimal.nev || !newAnimal.leiras || !newAnimal.ar || !newAnimal.raktaron || !newAnimal.kep) {
+    if (!newAnimal.nev || !newAnimal.leiras || !newAnimal.ar || !newAnimal.kep) {
         res.status(400).send("Az adatok nem megfelelőek!")
         return
     }
 
     data.push(newAnimal)
-    res.status(201).json(newAnimal.id)
+    res.status(201).json({ id : newAnimal.id })
 }
 
+const allowed = ["nev", "leiras", "ar", "raktaron", "kep"]
 export const modifyAnimal = (req:Request, res:Response) =>{
     const animal = data.find(animal => animal.id == Number(req.params.id))
 
@@ -35,19 +36,21 @@ export const modifyAnimal = (req:Request, res:Response) =>{
         res.status(404).send("Az elem nem létezik")
         return
     }
-    if (!req.body){
+    
+    const keys = Object.keys(req.body ?? {})
+    if (keys.length === 0 || !keys.every(k => allowed.includes(k))) {
         res.status(400).send("Az adatok nem megfelelőek!")
+        return
     }
 
     Object.assign(animal, req.body, { id: animal.id })
     res.status(201).send("Sikeres módosítás")
-    res.send(animal)
 }
 
 export const deleteAnimal = (req:Request, res: Response) => {
     const animal = data.findIndex(animal => animal.id == Number(req.params.id))
 
-    if (!animal) {
+    if (animal === -1) {
         res.status(404).send("A kisállat nem létezik")
         return
     }
